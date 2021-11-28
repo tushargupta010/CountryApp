@@ -1,26 +1,22 @@
 package com.tushar.countrylist.model;
 
+import com.tushar.countrylist.di.DaggerApiComponent;
+
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CountryService {
 
-    private static final String BASE_URL = "https://raw.githubusercontent.com";
-
     private static CountryService instance;
 
-    private CountryAPI api = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build().create(CountryAPI.class);
+    @Inject
+    public CountryAPI api;
 
     private CountryService() {
-
+        DaggerApiComponent.create().inject(this);
     }
 
     public static CountryService getInstance() {
