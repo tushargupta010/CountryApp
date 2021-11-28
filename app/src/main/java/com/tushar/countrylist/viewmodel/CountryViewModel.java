@@ -28,7 +28,13 @@ public class CountryViewModel extends ViewModel {
     @Inject
     public CountryService countryService;
     //private CountryService countryService = CountryService.getInstance();
-    private CompositeDisposable disposable = new CompositeDisposable();
+    private CompositeDisposable disposable;
+
+    public CountryViewModel() {
+        super();
+        disposable = new CompositeDisposable();
+        DaggerApiComponent.create().inject(this);
+    }
 
     public void refresh() {
         fetchCountries();
@@ -38,7 +44,6 @@ public class CountryViewModel extends ViewModel {
 
         //tempApiData();
         loading.setValue(true);
-        DaggerApiComponent.create().inject(this);
         disposable.add(
                 countryService.getCountries()
                 .subscribeOn(Schedulers.newThread())
