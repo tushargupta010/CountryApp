@@ -1,12 +1,20 @@
 package com.tushar.countrylist.viewmodel;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.tushar.countrylist.model.Country;
+import com.tushar.countrylist.model.CountryService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class CountryViewModel extends ViewModel {
 
@@ -14,11 +22,42 @@ public class CountryViewModel extends ViewModel {
     public MutableLiveData<Boolean> countryLoadError = new MutableLiveData<Boolean>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<Boolean>();
 
+    private CountryService countryService = CountryService.getInstance();
+    private CompositeDisposable disposable = new CompositeDisposable();
+
     public void refresh() {
         fetchCountries();
     }
 
     private void fetchCountries() {
+
+        //tempApiData();
+
+        loading.setValue(true);
+        disposable.add(
+                countryService.getCountries()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<List<Country>>() {
+                    @Override
+                    public void onSuccess(@NonNull List<Country> countriesList) {
+                        countries.setValue(countriesList);
+                        countryLoadError.setValue(false);
+                        loading.setValue(false);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        countryLoadError.setValue(true);
+                        loading.setValue(false);
+                        e.printStackTrace();
+                    }
+                })
+        );
+
+    }
+
+    private void tempApiData() {
         Country country1 = new Country("Albania", "Triana", "");
         Country country2 = new Country("Brazil", "Brasilia", "");
         Country country3 = new Country("Czechia", "Praha", "");
@@ -31,7 +70,11 @@ public class CountryViewModel extends ViewModel {
         countries.setValue(countryList);
         countryLoadError.setValue(false);
         loading.setValue(false);
-
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        disposable.clear();
+    }
 }

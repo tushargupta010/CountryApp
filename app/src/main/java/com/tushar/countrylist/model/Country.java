@@ -1,9 +1,12 @@
 package com.tushar.countrylist.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Country {
 
     String name;
     String capital;
+    @SerializedName("flagPNG")
     String flag;
 
     public Country(String name, String capital, String flag) {
