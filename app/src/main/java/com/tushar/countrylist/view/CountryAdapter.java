@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tushar.countrylist.R;
 import com.tushar.countrylist.model.Country;
+import com.tushar.countrylist.util.Util;
 
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         void bind(Country country) {
             countryName.setText(country.getName());
             countryCapital.setText(country.getCapital());
+            Util.loadImage(countryImage,country.getFlag(), Util.getCircularProgressDrawable(countryImage.getContext()));
         }
 
     }
