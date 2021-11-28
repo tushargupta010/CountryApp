@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.tushar.countrylist.di.DaggerApiComponent;
 import com.tushar.countrylist.model.Country;
 import com.tushar.countrylist.model.CountryService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -22,7 +25,9 @@ public class CountryViewModel extends ViewModel {
     public MutableLiveData<Boolean> countryLoadError = new MutableLiveData<Boolean>();
     public MutableLiveData<Boolean> loading = new MutableLiveData<Boolean>();
 
-    private CountryService countryService = CountryService.getInstance();
+    @Inject
+    public CountryService countryService;
+    //private CountryService countryService = CountryService.getInstance();
     private CompositeDisposable disposable = new CompositeDisposable();
 
     public void refresh() {
@@ -32,8 +37,8 @@ public class CountryViewModel extends ViewModel {
     private void fetchCountries() {
 
         //tempApiData();
-
         loading.setValue(true);
+        DaggerApiComponent.create().inject(this);
         disposable.add(
                 countryService.getCountries()
                 .subscribeOn(Schedulers.newThread())

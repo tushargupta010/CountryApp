@@ -23,4 +23,9 @@ public class ApiModule {
                 .build().create(CountryAPI.class);
     }
 
+    @Provides
+    public CountryService provideCountryService() {
+        return CountryService.getInstance();
+    }
+
 }
