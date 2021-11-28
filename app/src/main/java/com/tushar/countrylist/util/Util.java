@@ -11,6 +11,8 @@ import com.tushar.countrylist.R;
 
 public class Util {
 
+    // Glide has a caching mechanism that allows images to stored in cache and reused.
+
     public static void loadImage(ImageView view, String url, CircularProgressDrawable circularProgressDrawable) {
         RequestOptions options = new RequestOptions()
                 .placeholder(circularProgressDrawable)
